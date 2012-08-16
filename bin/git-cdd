@@ -25,9 +25,9 @@ commit() {
   git add . && git add -u .
   git commit -m "$MESSAGE"
   git checkout $TARGET_BRANCH
-  git merge $BRANCH_NAME
-  git branch -d $BRANCH_NAME
-  rm $CURRENT_BRANCH_FILE && rm $MESSAGE_FILE
+  git merge --ff-only $BRANCH_NAME \
+  && git branch -d $BRANCH_NAME \
+  && rm $CURRENT_BRANCH_FILE && rm $MESSAGE_FILE
 }
 
 version() {
