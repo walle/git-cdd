@@ -9,7 +9,7 @@ But this is just a quick hack to test things out. Written in like an hour, so I 
 How it works
 ------------
 
-git-cdd is a simple shellscript that takes a commit message creates a branch from it, where you can do all changes related to the commit, then closes the branch and merges it with your previous branch.
+git-cdd is a simple shellscript that takes a commit message and creates a branch from it, where you can do all changes related to the commit, then closes the branch and merges it with your previous branch.
 This will only move the commit, no merge commits should be created.
 The commit message will be the message you started the commit with.
 
