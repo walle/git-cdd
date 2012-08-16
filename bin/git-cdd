@@ -1,0 +1,61 @@
+#!/usr/bin/env sh
+
+VERSION="0.1.0"
+CURRENT_BRANCH_FILE='/tmp/.git-cdd-current-branch'
+MESSAGE_FILE='/tmp/.git-cdd-message'
+
+start() {
+  if [ -z "$1" ]; then
+    usage
+    exit 1
+  fi
+
+  CURRENT_BRANCH=$(git branch | grep "*" | sed "s/* //")
+  MESSAGE="$1"
+  BRANCH_NAME=$(echo "$MESSAGE" | tr "[:upper:]" "[:lower:]" | tr ' ' '_')
+  git checkout -b $BRANCH_NAME
+  touch $CURRENT_BRANCH_FILE && echo $CURRENT_BRANCH > $CURRENT_BRANCH_FILE
+  touch $MESSAGE_FILE && echo $MESSAGE > $MESSAGE_FILE
+}
+
+commit() {
+  TARGET_BRANCH=$(cat $CURRENT_BRANCH_FILE)
+  MESSAGE=$(cat $MESSAGE_FILE)
+  BRANCH_NAME=$(git branch | grep "*" | sed "s/* //")
+  git add . && git add -u .
+  git commit -m "$MESSAGE"
+  git checkout $TARGET_BRANCH
+  git merge $BRANCH_NAME
+  git branch -d $BRANCH_NAME
+  rm $CURRENT_BRANCH_FILE && rm $MESSAGE_FILE
+}
+
+version() {
+  echo "git-cdd $VERSION"
+}
+
+usage() {
+  echo "usage: git-cdd <command> [<args>]"
+  echo ""
+  echo "Commands:"
+  echo "   start <\"commit message\">   Start a new commit"
+  echo "   commit                     Finish work on your commit"
+}
+
+case $1 in
+  "start" )
+    start "$2"
+    ;;
+  "commit" )
+    commit
+    ;;
+  "--version" )
+    version
+    ;;
+  *)
+    usage
+    exit 1
+    ;;
+esac
+
+exit 0
